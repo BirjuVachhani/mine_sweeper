@@ -16,20 +16,24 @@ class GameHeader extends StatelessWidget {
   
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.grey.shade100,
+        color: colorScheme.surfaceVariant.withOpacity(0.5),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey.shade300),
+        border: Border.all(color: colorScheme.outline.withOpacity(0.5)),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           _buildInfoCard(
+            context,
             icon: Icons.flag,
             value: remainingFlags.toString().padLeft(2, '0'),
-            color: Colors.red,
+            color: colorScheme.error,
           ),
           Column(
             children: [
@@ -47,32 +51,35 @@ class GameHeader extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
-                  color: _getStatusColor(),
+                  color: _getStatusColor(context),
                 ),
               ),
             ],
           ),
           _buildInfoCard(
+            context,
             icon: Icons.timer,
             value: _formatTime(elapsedTime),
-            color: Colors.blue,
+            color: colorScheme.primary,
           ),
         ],
       ),
     );
   }
   
-  Widget _buildInfoCard({
+  Widget _buildInfoCard(
+    BuildContext context, {
     required IconData icon,
     required String value,
     required Color color,
   }) {
+    final theme = Theme.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: color.withValues(alpha: 0.3)),
+        border: Border.all(color: color.withOpacity(0.5)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -98,11 +105,15 @@ class GameHeader extends StatelessWidget {
     return '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
   }
   
-  Color _getStatusColor() {
+  Color _getStatusColor(BuildContext context) {
+    final isLight = Theme.of(context).brightness == Brightness.light;
     switch (gameStatus) {
-      case 'Won!': return Colors.green;
-      case 'Lost!': return Colors.red;
-      default: return Colors.orange;
+      case 'Won!':
+        return isLight ? Colors.green.shade700 : Colors.green.shade300;
+      case 'Lost!':
+        return Theme.of(context).colorScheme.error;
+      default:
+        return isLight ? Colors.orange.shade700 : Colors.orange.shade300;
     }
   }
 }

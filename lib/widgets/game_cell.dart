@@ -23,37 +23,40 @@ class GameCell extends StatelessWidget {
       child: Container(
         margin: const EdgeInsets.all(1),
         decoration: BoxDecoration(
-          color: _getCellColor(),
+          color: _getCellColor(context),
           border: Border.all(
-            color: Colors.grey.shade400,
+            color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
             width: 1,
           ),
           borderRadius: BorderRadius.circular(2),
         ),
         child: Center(
-          child: _buildCellContent(),
+          child: _buildCellContent(context),
         ),
       ),
     );
   }
   
-  Color _getCellColor() {
+  Color _getCellColor(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     if (cell.isRevealed) {
       if (cell.isMine) {
-        return Colors.red.shade300;
+        return colorScheme.errorContainer;
       }
-      return Colors.grey.shade200;
+      return colorScheme.surfaceVariant.withOpacity(0.7);
     } else if (cell.isFlagged) {
-      return Colors.orange.shade200;
+      return colorScheme.secondaryContainer;
     }
-    return Colors.grey.shade300;
+    return colorScheme.surfaceVariant;
   }
   
-  Widget _buildCellContent() {
+  Widget _buildCellContent(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    
     if (cell.isFlagged) {
       return Icon(
         Icons.flag,
-        color: Colors.red.shade700,
+        color: colorScheme.error,
         size: 16,
       );
     }
@@ -62,7 +65,7 @@ class GameCell extends StatelessWidget {
       if (cell.isMine) {
         return Icon(
           Icons.dangerous,
-          color: Colors.red.shade700,
+          color: colorScheme.error,
           size: 16,
         );
       } else if (cell.adjacentMines > 0) {
@@ -82,14 +85,14 @@ class GameCell extends StatelessWidget {
   
   Color _getNumberColor(int number) {
     switch (number) {
-      case 1: return Colors.blue;
-      case 2: return Colors.green;
-      case 3: return Colors.red;
-      case 4: return Colors.purple;
-      case 5: return Colors.brown;
-      case 6: return Colors.pink;
+      case 1: return Colors.blueAccent;
+      case 2: return Colors.green.shade600;
+      case 3: return Colors.redAccent;
+      case 4: return Colors.purpleAccent;
+      case 5: return Colors.brown.shade400;
+      case 6: return Colors.pinkAccent;
       case 7: return Colors.black;
-      case 8: return Colors.grey;
+      case 8: return Colors.grey.shade700;
       default: return Colors.black;
     }
   }
