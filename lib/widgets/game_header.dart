@@ -5,7 +5,7 @@ class GameHeader extends StatelessWidget {
   final Duration elapsedTime;
   final VoidCallback onNewGame;
   final String gameStatus;
-  
+
   const GameHeader({
     super.key,
     required this.remainingFlags,
@@ -13,12 +13,12 @@ class GameHeader extends StatelessWidget {
     required this.onNewGame,
     required this.gameStatus,
   });
-  
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -42,7 +42,8 @@ class GameHeader extends StatelessWidget {
                 icon: const Icon(Icons.refresh, size: 18),
                 label: const Text('New Game'),
                 style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 ),
               ),
               const SizedBox(height: 4),
@@ -66,7 +67,7 @@ class GameHeader extends StatelessWidget {
       ),
     );
   }
-  
+
   Widget _buildInfoCard(
     BuildContext context, {
     required IconData icon,
@@ -98,13 +99,13 @@ class GameHeader extends StatelessWidget {
       ),
     );
   }
-  
+
   String _formatTime(Duration duration) {
     final minutes = duration.inMinutes;
     final seconds = duration.inSeconds % 60;
     return '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
   }
-  
+
   Color _getStatusColor(BuildContext context) {
     final isLight = Theme.of(context).brightness == Brightness.light;
     switch (gameStatus) {
