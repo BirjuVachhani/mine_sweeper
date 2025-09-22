@@ -14,7 +14,7 @@ class MinesweeperApp extends StatelessWidget {
       title: 'Minesweeper',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.orange,
+          seedColor: Colors.indigo,
           brightness: Brightness.light,
         ),
         useMaterial3: true,
