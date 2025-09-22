@@ -14,14 +14,10 @@ class MinesweeperApp extends StatelessWidget {
       title: 'Minesweeper',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.teal,
+          seedColor: Colors.blue,
           brightness: Brightness.light,
         ),
         useMaterial3: true,
-        scaffoldBackgroundColor: const Color(0xFFf0f0f0),
-        textTheme: const TextTheme(
-          bodyMedium: TextStyle(fontSize: 18),
-        ),
       ),
       home: const GameScreen(),
     );
