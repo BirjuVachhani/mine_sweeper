@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'package:google_fonts/google_fonts.dart';
 import '../models/game_state.dart';
 import '../services/game_service.dart';
 import '../widgets/game_header.dart';
 import '../widgets/game_board.dart';
 
 class GameScreen extends StatefulWidget {
-  const GameScreen({super.key});
+  final Function(ThemeMode) toggleTheme;
+
+  const GameScreen({super.key, required this.toggleTheme});
   
   @override
   State<GameScreen> createState() => _GameScreenState();
@@ -76,24 +79,50 @@ class _GameScreenState extends State<GameScreen> {
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
+        backgroundColor: Theme.of(context).colorScheme.surface,
         title: Row(
           children: [
             Icon(
-              isWon ? Icons.celebration : Icons.sentiment_dissatisfied,
-              color: isWon ? Colors.green : Colors.red,
+              isWon ? Icons.emoji_events : Icons.mood_bad,
+              color: isWon ? Colors.greenAccent : Colors.redAccent,
             ),
             const SizedBox(width: 8),
-            Text(isWon ? 'Congratulations!' : 'Game Over'),
+            Text(
+              isWon ? 'VICTORY!' : 'DEFEAT!',
+              style: GoogleFonts.pressStart2p(
+                fontSize: 18,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+            ),
           ],
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(isWon ? 'You won!' : 'You hit a mine!'),
+            Text(
+              isWon ? 'You\'ve cleared the field!' : 'BOOM! Mine Exploded!',
+              style: GoogleFonts.pressStart2p(
+                fontSize: 12,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+            ),
             const SizedBox(height: 8),
-            Text('Time: ${_formatTime(_gameState.elapsedTime)}'),
-            if (isWon) Text('Mines: ${_gameState.totalMines}'),
+            Text(
+              'Time: ${_formatTime(_gameState.elapsedTime)}',
+              style: GoogleFonts.pressStart2p(
+                fontSize: 12,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+            ),
+            if (isWon)
+              Text(
+                'Mines Found: ${_gameState.totalMines}',
+                style: GoogleFonts.pressStart2p(
+                  fontSize: 12,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
           ],
         ),
         actions: [
@@ -102,7 +131,13 @@ class _GameScreenState extends State<GameScreen> {
               Navigator.of(context).pop();
               _startNewGame();
             },
-            child: const Text('New Game'),
+            child: Text(
+              'RETRY',
+              style: GoogleFonts.pressStart2p(
+                color: Theme.of(context).colorScheme.primary,
+                fontSize: 14,
+              ),
+            ),
           ),
         ],
       ),
@@ -118,21 +153,36 @@ class _GameScreenState extends State<GameScreen> {
   String _getGameStatus() {
     switch (_gameState.status) {
       case GameStatus.won:
-        return 'Won!';
+        return 'WON!';
       case GameStatus.lost:
-        return 'Lost!';
+        return 'LOST!';
       case GameStatus.playing:
-        return 'Playing';
+        return 'PLAYING';
     }
   }
   
   @override
   Widget build(BuildContext context) {
+    final currentThemeBrightness = Theme.of(context).brightness;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Minesweeper'),
-        centerTitle: true,
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        title: const Text('MINESWEEPER'),
+        actions: [
+          IconButton(
+            icon: Icon(
+              currentThemeBrightness == Brightness.dark
+                  ? Icons.light_mode
+                  : Icons.dark_mode,
+            ),
+            onPressed: () {
+              widget.toggleTheme(
+                currentThemeBrightness == Brightness.dark
+                    ? ThemeMode.light
+                    : ThemeMode.dark,
+              );
+            },
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -153,26 +203,51 @@ class _GameScreenState extends State<GameScreen> {
               ),
             ),
             const SizedBox(height: 20),
-            const Card(
+            Card(
+              color: Theme.of(context).colorScheme.surface,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+                side: BorderSide(
+                  color: Theme.of(context).colorScheme.primary,
+                  width: 2,
+                ),
+              ),
               child: Padding(
-                padding: EdgeInsets.all(16),
+                padding: const EdgeInsets.all(16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'How to Play:',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      'HOW TO PLAY:',
+                      style: GoogleFonts.pressStart2p(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
                     ),
-                    SizedBox(height: 8),
-                    Text('• Tap to reveal cells'),
-                    Text('• Long press to flag/unflag mines'),
-                    Text('• Numbers show adjacent mine count'),
-                    Text('• Avoid mines and reveal all safe cells to win!'),
+                    const SizedBox(height: 8),
+                    _buildInstructionText('• Tap to reveal cells'),
+                    _buildInstructionText('• Long press to flag/unflag mines'),
+                    _buildInstructionText('• Numbers show adjacent mine count'),
+                    _buildInstructionText('• Avoid mines and reveal all safe cells to win!'),
                   ],
                 ),
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInstructionText(String text) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Text(
+        text,
+        style: GoogleFonts.pressStart2p(
+          fontSize: 10,
+          color: Theme.of(context).colorScheme.onSurface,
         ),
       ),
     );
