@@ -2,12 +2,19 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import '../models/game_state.dart';
 import '../services/game_service.dart';
+import '../services/theme_service.dart';
 import '../widgets/game_header.dart';
 import '../widgets/game_board.dart';
+import '../widgets/theme_toggle_button.dart';
 
 class GameScreen extends StatefulWidget {
-  const GameScreen({super.key});
-  
+  final ThemeService themeService;
+
+  const GameScreen({
+    super.key,
+    required this.themeService,
+  });
+
   @override
   State<GameScreen> createState() => _GameScreenState();
 }
@@ -15,26 +22,26 @@ class GameScreen extends StatefulWidget {
 class _GameScreenState extends State<GameScreen> {
   late GameState _gameState;
   Timer? _timer;
-  
+
   @override
   void initState() {
     super.initState();
     _startNewGame();
   }
-  
+
   @override
   void dispose() {
     _timer?.cancel();
     super.dispose();
   }
-  
+
   void _startNewGame() {
     setState(() {
       _gameState = GameService.createNewGame();
     });
     _startTimer();
   }
-  
+
   void _startTimer() {
     _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
@@ -47,31 +54,31 @@ class _GameScreenState extends State<GameScreen> {
       }
     });
   }
-  
+
   void _onCellTap(int row, int col) {
     if (_gameState.isGameOver) return;
-    
+
     setState(() {
       _gameState = GameService.revealCell(_gameState, row, col);
     });
-    
+
     if (_gameState.isGameOver) {
       _timer?.cancel();
       _showGameOverDialog();
     }
   }
-  
+
   void _onCellLongPress(int row, int col) {
     if (_gameState.isGameOver) return;
-    
+
     setState(() {
       _gameState = GameService.toggleFlag(_gameState, row, col);
     });
   }
-  
+
   void _showGameOverDialog() {
     final isWon = _gameState.status == GameStatus.won;
-    
+
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -108,13 +115,13 @@ class _GameScreenState extends State<GameScreen> {
       ),
     );
   }
-  
+
   String _formatTime(Duration duration) {
     final minutes = duration.inMinutes;
     final seconds = duration.inSeconds % 60;
     return '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
   }
-  
+
   String _getGameStatus() {
     switch (_gameState.status) {
       case GameStatus.won:
@@ -125,7 +132,7 @@ class _GameScreenState extends State<GameScreen> {
         return 'Playing';
     }
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -133,6 +140,10 @@ class _GameScreenState extends State<GameScreen> {
         title: const Text('Minesweeper'),
         centerTitle: true,
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        actions: [
+          ThemeToggleButton(themeService: widget.themeService),
+          const SizedBox(width: 8),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
