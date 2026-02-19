@@ -58,3 +58,4 @@ detective_connect.txt
 **/pubspec_overrides.yaml
 
 mason-lock.json
+android/key.properties
